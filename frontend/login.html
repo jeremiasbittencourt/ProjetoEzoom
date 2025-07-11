@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - KPIs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-8 rounded-2xl shadow max-w-sm w-full">
+    <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+    <form id="loginForm" class="space-y-4">
+      <input type="email" id="email" placeholder="Email" class="w-full border rounded-lg px-4 py-2" required />
+      <input type="password" id="password" placeholder="Senha" class="w-full border rounded-lg px-4 py-2" required />
+      <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Entrar</button>
+    </form>
+    <p id="error" class="text-red-600 mt-3 hidden text-sm text-center">Credenciais inválidas</p>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const error = document.getElementById('error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.classList.add('hidden');
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('http://localhost:8000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // Salva o token e redireciona
+          localStorage.setItem('token', data.token);
+          window.location.href = 'index.html';
+        } else {
+          error.textContent = data.message;
+          error.classList.remove('hidden');
+        }
+
+      } catch (err) {
+        error.textContent = 'Erro ao conectar com o servidor';
+        error.classList.remove('hidden');
+      }
+    });
+  </script>
+
+</body>
+</html>

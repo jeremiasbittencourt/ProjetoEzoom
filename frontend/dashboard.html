@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard KPIs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start p-6">
+
+  <h1 class="text-3xl font-bold mb-6">Dashboard de KPIs</h1>
+
+  <div id="kpi-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl"></div>
+
+  <script>
+    async function fetchKPIs() {
+      try {
+        const response = await fetch('http://localhost:8000/api/kpis');
+        const data = await response.json();
+
+        const container = document.getElementById('kpi-container');
+        container.innerHTML = '';
+
+        data.forEach(kpi => {
+          const isPositive = parseFloat(kpi.variacao_percentual) >= 0;
+          const arrow = isPositive ? '▲' : '▼';
+          const color = isPositive ? 'text-green-600' : 'text-red-600';
+
+          const card = document.createElement('div');
+          card.className = 'bg-white p-6 rounded-2xl shadow flex flex-col items-start';
+
+          card.innerHTML = `
+            <h2 class="text-xl font-semibold mb-2">${kpi.titulo}</h2>
+            <p class="text-2xl font-bold text-gray-800 mb-1">R$ ${parseFloat(kpi.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+            <p class="text-sm ${color}">${arrow} ${kpi.variacao_percentual}%</p>
+          `;
+
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Erro ao buscar KPIs:', error);
+      }
+    }
+
+    // Primeira chamada
+    fetchKPIs();
+
+    // Atualiza a cada 30 segundos
+    setInterval(fetchKPIs, 30000);
+  </script>
+
+</body>
+</html>
