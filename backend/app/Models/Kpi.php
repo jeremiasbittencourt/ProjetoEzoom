@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Kpi extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'titulo',
+        'valor',
+        'variacao_percentual'
+    ];
+
+    protected $casts = [
+        'valor' => 'decimal:2',
+        'variacao_percentual' => 'decimal:2'
+    ];
 }

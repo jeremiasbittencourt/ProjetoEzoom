@@ -1,35 +1,196 @@
-<!-- Estrutura similar ao login, com campos name, email, password, password_confirmation -->
-<form id="registerForm">
-  <input type="text" id="name" placeholder="Nome" required />
-  <input type="email" id="email" placeholder="Email" required />
-  <input type="password" id="password" placeholder="Senha" required />
-  <input type="password" id="password_confirmation" placeholder="Confirme a senha" required />
-  <button type="submit">Registrar</button>
-</form>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - KPIs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center min-h-screen p-4">
 
-<script>
-  document.getElementById('registerForm').addEventListener('submit', async e => {
-    e.preventDefault();
+  <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-user-plus text-2xl text-blue-600"></i>
+      </div>
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">Criar Conta</h2>
+      <p class="text-gray-600">Preencha os dados para se cadastrar</p>
+    </div>
 
-    const payload = {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      password: document.getElementById('password').value,
-      password_confirmation: document.getElementById('password_confirmation').value
-    };
+    <form id="registerForm" class="space-y-6">
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-user text-gray-400"></i>
+          </div>
+          <input 
+            type="text" 
+            id="name" 
+            placeholder="Seu nome completo" 
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+            required 
+          />
+        </div>
+      </div>
 
-    const res = await fetch('http://localhost:8000/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-envelope text-gray-400"></i>
+          </div>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="seu@email.com" 
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+            required 
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-lock text-gray-400"></i>
+          </div>
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="Mínimo 6 caracteres" 
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+            required 
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-lock text-gray-400"></i>
+          </div>
+          <input 
+            type="password" 
+            id="password_confirmation" 
+            placeholder="Confirme sua senha" 
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+            required 
+          />
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+      >
+        <i class="fas fa-user-plus mr-2"></i>Criar Conta
+      </button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-600">
+        Já tem uma conta? 
+        <a href="login.html" class="text-blue-600 hover:text-blue-700 font-medium">Faça login</a>
+      </p>
+    </div>
+
+    <!-- Error message -->
+    <div id="error" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+        <span id="errorMessage" class="text-red-800 text-sm">Erro ao criar conta</span>
+      </div>
+    </div>
+
+    <!-- Success message -->
+    <div id="success" class="hidden mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <i class="fas fa-check-circle text-green-600 mr-3"></i>
+        <span class="text-green-800 text-sm">Conta criada com sucesso! Redirecionando...</span>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loading" class="hidden mt-4 flex items-center justify-center">
+      <div class="flex items-center space-x-3">
+        <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+        <span class="text-gray-600 text-sm">Criando conta...</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const error = document.getElementById('error');
+    const success = document.getElementById('success');
+    const loading = document.getElementById('loading');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.classList.add('hidden');
+      success.classList.add('hidden');
+      loading.classList.remove('hidden');
+
+      const password = document.getElementById('password').value;
+      const passwordConfirmation = document.getElementById('password_confirmation').value;
+
+      if (password !== passwordConfirmation) {
+        error.textContent = 'As senhas não coincidem';
+        error.classList.remove('hidden');
+        loading.classList.add('hidden');
+        return;
+      }
+
+      if (password.length < 6) {
+        error.textContent = 'A senha deve ter pelo menos 6 caracteres';
+        error.classList.remove('hidden');
+        loading.classList.add('hidden');
+        return;
+      }
+
+      const payload = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        password: password,
+        password_confirmation: passwordConfirmation
+      };
+
+      try {
+        const res = await fetch('http://localhost:8000/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          success.classList.remove('hidden');
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+        } else {
+          if (data.errors) {
+            const errorMessages = Object.values(data.errors).flat().join(', ');
+            error.textContent = errorMessages;
+          } else {
+            error.textContent = data.message || 'Erro ao criar conta';
+          }
+          error.classList.remove('hidden');
+        }
+
+      } catch (err) {
+        error.textContent = 'Erro ao conectar com o servidor';
+        error.classList.remove('hidden');
+      } finally {
+        loading.classList.add('hidden');
+      }
     });
+  </script>
 
-    if (res.ok) {
-      alert('Usuário criado com sucesso!');
-      window.location.href = 'login.html';
-    } else {
-      const data = await res.json();
-      alert('Erro: ' + JSON.stringify(data.errors));
-    }
-  });
-</script>
+</body>
+</html>

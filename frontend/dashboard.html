@@ -5,41 +5,273 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard KPIs</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start p-6">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
 
-  <h1 class="text-3xl font-bold mb-6">Dashboard de KPIs</h1>
+  <!-- Header com navegação -->
+  <header class="bg-white shadow-lg border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <i class="fas fa-chart-line text-2xl text-blue-600 mr-3"></i>
+          <h1 class="text-2xl font-bold text-gray-800">Dashboard KPIs</h1>
+        </div>
+        
+        <nav class="hidden md:flex space-x-8">
+          <a href="#" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Dashboard</a>
+          <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Relatórios</a>
+          <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Configurações</a>
+        </nav>
 
-  <div id="kpi-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl"></div>
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-user-circle text-gray-600"></i>
+            <span id="userName" class="text-sm text-gray-700">Usuário</span>
+          </div>
+          <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+            <i class="fas fa-sign-out-alt mr-2"></i>Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu mobile -->
+  <div class="md:hidden bg-white border-b">
+    <div class="px-4 py-2">
+      <nav class="flex space-x-4 text-sm">
+        <a href="#" class="text-blue-600 font-medium">Dashboard</a>
+        <a href="#" class="text-gray-600">Relatórios</a>
+        <a href="#" class="text-gray-600">Configurações</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Cards de resumo -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total de KPIs</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalKpis">4</p>
+          </div>
+          <div class="p-3 bg-blue-100 rounded-full">
+            <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Positivos</p>
+            <p class="text-2xl font-bold text-gray-900" id="positiveKpis">2</p>
+          </div>
+          <div class="p-3 bg-green-100 rounded-full">
+            <i class="fas fa-arrow-up text-green-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Negativos</p>
+            <p class="text-2xl font-bold text-gray-900" id="negativeKpis">1</p>
+          </div>
+          <div class="p-3 bg-red-100 rounded-full">
+            <i class="fas fa-arrow-down text-red-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-gray-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Neutros</p>
+            <p class="text-2xl font-bold text-gray-900" id="neutralKpis">1</p>
+          </div>
+          <div class="p-3 bg-gray-100 rounded-full">
+            <i class="fas fa-minus text-gray-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Título da seção -->
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Indicadores de Performance</h2>
+      <div class="flex items-center space-x-2">
+        <span class="text-sm text-gray-600">Atualizado a cada 30s</span>
+        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Grid de KPIs -->
+    <div id="kpi-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+
+    <!-- Loading state -->
+    <div id="loading" class="hidden flex items-center justify-center py-12">
+      <div class="flex items-center space-x-3">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span class="text-gray-600">Carregando KPIs...</span>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div class="flex items-center">
+        <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+        <span id="errorMessage" class="text-red-800">Erro ao carregar dados</span>
+      </div>
+    </div>
+  </main>
 
   <script>
+    // Verificar se usuário está logado
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    // Carregar informações do usuário
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    document.getElementById('userName').textContent = user.name || 'Usuário';
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    });
+
     async function fetchKPIs() {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const container = document.getElementById('kpi-container');
+
       try {
-        const response = await fetch('http://localhost:8000/api/kpis');
-        const data = await response.json();
+        loading.classList.remove('hidden');
+        error.classList.add('hidden');
 
-        const container = document.getElementById('kpi-container');
-        container.innerHTML = '';
-
-        data.forEach(kpi => {
-          const isPositive = parseFloat(kpi.variacao_percentual) >= 0;
-          const arrow = isPositive ? '▲' : '▼';
-          const color = isPositive ? 'text-green-600' : 'text-red-600';
-
-          const card = document.createElement('div');
-          card.className = 'bg-white p-6 rounded-2xl shadow flex flex-col items-start';
-
-          card.innerHTML = `
-            <h2 class="text-xl font-semibold mb-2">${kpi.titulo}</h2>
-            <p class="text-2xl font-bold text-gray-800 mb-1">R$ ${parseFloat(kpi.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-            <p class="text-sm ${color}">${arrow} ${kpi.variacao_percentual}%</p>
-          `;
-
-          container.appendChild(card);
+        const response = await fetch('http://localhost:8000/api/kpis', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // Atualizar contadores
+        updateCounters(data);
+        
+        // Renderizar KPIs
+        renderKPIs(data);
+
       } catch (error) {
         console.error('Erro ao buscar KPIs:', error);
+        document.getElementById('errorMessage').textContent = 'Erro ao conectar com o servidor. Verifique se está logado.';
+        document.getElementById('error').classList.remove('hidden');
+        container.innerHTML = '';
+      } finally {
+        loading.classList.add('hidden');
       }
+    }
+
+    function updateCounters(kpis) {
+      let positive = 0, negative = 0, neutral = 0;
+      
+      kpis.forEach(kpi => {
+        const variation = parseFloat(kpi.variacao_percentual);
+        if (variation > 0) positive++;
+        else if (variation < 0) negative++;
+        else neutral++;
+      });
+
+      document.getElementById('totalKpis').textContent = kpis.length;
+      document.getElementById('positiveKpis').textContent = positive;
+      document.getElementById('negativeKpis').textContent = negative;
+      document.getElementById('neutralKpis').textContent = neutral;
+    }
+
+    function renderKPIs(data) {
+      const container = document.getElementById('kpi-container');
+      container.innerHTML = '';
+
+      data.forEach(kpi => {
+        const isPositive = parseFloat(kpi.variacao_percentual) >= 0;
+        const variation = parseFloat(kpi.variacao_percentual);
+        
+        let icon, color, bgColor, borderColor;
+        
+        if (variation > 0) {
+          icon = 'fas fa-arrow-up';
+          color = 'text-green-600';
+          bgColor = 'bg-green-50';
+          borderColor = 'border-green-200';
+        } else if (variation < 0) {
+          icon = 'fas fa-arrow-down';
+          color = 'text-red-600';
+          bgColor = 'bg-red-50';
+          borderColor = 'border-red-200';
+        } else {
+          icon = 'fas fa-minus';
+          color = 'text-gray-600';
+          bgColor = 'bg-gray-50';
+          borderColor = 'border-gray-200';
+        }
+
+        const card = document.createElement('div');
+        card.className = `bg-white rounded-xl shadow-lg p-6 border-l-4 ${borderColor} hover:shadow-xl transition-shadow duration-300`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">${kpi.titulo}</h3>
+            <div class="p-2 ${bgColor} rounded-full">
+              <i class="${icon} ${color} text-sm"></i>
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <div class="flex items-baseline space-x-2">
+              <span class="text-3xl font-bold text-gray-900">
+                ${formatValue(kpi.valor)}
+              </span>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+              <i class="${icon} ${color} text-sm"></i>
+              <span class="text-sm font-medium ${color}">
+                ${variation > 0 ? '+' : ''}${kpi.variacao_percentual}%
+              </span>
+              <span class="text-xs text-gray-500">vs período anterior</span>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function formatValue(value) {
+      const numValue = parseFloat(value);
+      
+      // Se o valor é um número inteiro, não mostra decimais
+      if (Number.isInteger(numValue)) {
+        return `R$ ${numValue.toLocaleString('pt-BR')}`;
+      }
+      
+      // Se tem decimais, mostra com 2 casas
+      return `R$ ${numValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     // Primeira chamada
