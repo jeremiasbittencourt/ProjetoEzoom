@@ -20,8 +20,6 @@
         
         <nav class="hidden md:flex space-x-8">
           <a href="#" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Dashboard</a>
-          <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Relatórios</a>
-          <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Configurações</a>
         </nav>
 
         <div class="flex items-center space-x-4">
@@ -57,7 +55,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-gray-600">Total de KPIs</p>
-            <p class="text-2xl font-bold text-gray-900" id="totalKpis">4</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalKpis"></p>
           </div>
           <div class="p-3 bg-blue-100 rounded-full">
             <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
@@ -69,7 +67,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-gray-600">Positivos</p>
-            <p class="text-2xl font-bold text-gray-900" id="positiveKpis">2</p>
+            <p class="text-2xl font-bold text-gray-900" id="positiveKpis"></p>
           </div>
           <div class="p-3 bg-green-100 rounded-full">
             <i class="fas fa-arrow-up text-green-600 text-xl"></i>
@@ -81,7 +79,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-gray-600">Negativos</p>
-            <p class="text-2xl font-bold text-gray-900" id="negativeKpis">1</p>
+            <p class="text-2xl font-bold text-gray-900" id="negativeKpis"></p>
           </div>
           <div class="p-3 bg-red-100 rounded-full">
             <i class="fas fa-arrow-down text-red-600 text-xl"></i>
@@ -93,7 +91,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-gray-600">Neutros</p>
-            <p class="text-2xl font-bold text-gray-900" id="neutralKpis">1</p>
+            <p class="text-2xl font-bold text-gray-900" id="neutralKpis"></p>
           </div>
           <div class="p-3 bg-gray-100 rounded-full">
             <i class="fas fa-minus text-gray-600 text-xl"></i>
@@ -108,6 +106,16 @@
       <div class="flex items-center space-x-2">
         <span class="text-sm text-gray-600">Atualizado a cada 30s</span>
         <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Contador de atualização -->
+    <div class="flex justify-center mb-6">
+      <div class="bg-white rounded-lg shadow-md px-6 py-3 flex items-center space-x-3">
+        <i class="fas fa-clock text-blue-600"></i>
+        <span class="text-sm text-gray-600">Próxima atualização em:</span>
+        <span id="countdown" class="text-lg font-bold text-blue-600">30</span>
+        <span class="text-sm text-gray-600">segundos</span>
       </div>
     </div>
 
@@ -244,7 +252,7 @@
           <div class="space-y-2">
             <div class="flex items-baseline space-x-2">
               <span class="text-3xl font-bold text-gray-900">
-                ${formatValue(kpi.valor)}
+                ${formatValue(kpi.valor, kpi.titulo)}
               </span>
             </div>
             
@@ -262,22 +270,46 @@
       });
     }
 
-    function formatValue(value) {
+    function formatValue(value, titulo) {
       const numValue = parseFloat(value);
       
-      // Se o valor é um número inteiro, não mostra decimais
-      if (Number.isInteger(numValue)) {
-        return `R$ ${numValue.toLocaleString('pt-BR')}`;
+      // Apenas "Vendas do Dia" deve ter formatação de moeda
+      if (titulo === 'Vendas do Dia') {
+        // Se o valor é um número inteiro, não mostra decimais
+        if (Number.isInteger(numValue)) {
+          return `R$ ${numValue.toLocaleString('pt-BR')}`;
+        }
+        
+        // Se tem decimais, mostra com 2 casas
+        return `R$ ${numValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       }
       
-      // Se tem decimais, mostra com 2 casas
-      return `R$ ${numValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      // Para os outros KPIs, retorna apenas o número formatado
+      return numValue.toLocaleString('pt-BR');
     }
 
     // Primeira chamada
     fetchKPIs();
 
-    // Atualiza a cada 30 segundos
+    // Contador regressivo
+    let countdown = 30;
+    const countdownElement = document.getElementById('countdown');
+    
+    function updateCountdown() {
+      countdownElement.textContent = countdown;
+      
+      if (countdown <= 0) {
+        countdown = 30;
+        fetchKPIs();
+      } else {
+        countdown--;
+      }
+    }
+
+    // Atualiza o contador a cada segundo
+    setInterval(updateCountdown, 1000);
+
+    // Atualiza KPIs a cada 30 segundos
     setInterval(fetchKPIs, 30000);
   </script>
 
