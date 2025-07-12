@@ -13,7 +13,7 @@ Um sistema completo de dashboard de KPIs (Key Performance Indicators) desenvolvi
 
 ### Frontend
 - ✅ **Interface responsiva** para desktop, tablet e mobile
-- ✅ **Design moderno** com Tailwind CSS e Font Awesome
+- ✅ **Design moderno** com Tailwind CSS 
 - ✅ **Navegação fluida** com menu e header
 - ✅ **Atualização automática** a cada 30 segundos
 - ✅ **Sistema de login/registro** completo
@@ -25,7 +25,7 @@ Um sistema completo de dashboard de KPIs (Key Performance Indicators) desenvolvi
 ### Backend
 - **Laravel 11** - Framework PHP
 - **Laravel Sanctum** - Autenticação API
-- **MySQL/SQLite** - Banco de dados
+- **MySQL** - Banco de dados
 - **Eloquent ORM** - Mapeamento objeto-relacional
 
 ### Frontend
@@ -76,8 +76,12 @@ cp .env.example .env
 php artisan key:generate
 
 # Configurar banco de dados no .env
-DB_CONNECTION=sqlite
-DB_DATABASE=database/database.sqlite
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=projeto_ezoom
+DB_USERNAME=root
+DB_PASSWORD=
 
 # Executar migrações e seeders
 php artisan migrate
@@ -92,18 +96,130 @@ php artisan serve
 ```bash
 cd frontend
 
-# Abrir no navegador (ou usar servidor local)
-# http://localhost:8000 (se usando servidor local)
+# Abrir no navegador o arquivo index
 ```
+
+## 🔌 Endpoints da API
+
+### Base URL
+```
+http://localhost:8000/api
+```
+
+### 1. Teste da API
+**GET** `/test`
+```bash
+curl -X GET http://localhost:8000/api/test
+```
+**Resposta:**
+```json
+{
+  "message": "API funcionando!"
+}
+```
+
+### 2. Registro de Usuário
+**POST** `/register`
+```bash
+curl -X POST http://localhost:8000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Rodrigo Rossa",
+    "email": "rodrigo@exemplo.com",
+    "password": "123456",
+    "password_confirmation": "123456"
+  }'
+```
+**Resposta:**
+```json
+{
+  "message": "Usuário criado com sucesso"
+}
+```
+
+### 3. Login
+**POST** `/login`
+```bash
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "rodrigo@exemplo.com",
+    "password": "123456"
+  }'
+```
+**Resposta:**
+```json
+{
+  "token": "1|abc123def456...",
+  "user": {
+    "id": 1,
+    "name": "Rodrigo Rossa",
+    "email": "rodrigo@exemplo.com"
+  }
+}
+```
+
+### 4. Listar KPIs (Protegido)
+**GET** `/kpis`
+```bash
+curl -X GET http://localhost:8000/api/kpis \
+  -H "Authorization: Bearer 1|abc123def456..." \
+  -H "Content-Type: application/json"
+```
+**Resposta:**
+```json
+[
+  {
+    "id": 1,
+    "titulo": "Vendas do Dia",
+    "valor": "1280.50",
+    "variacao_percentual": "5.20",
+    "created_at": "2024-01-01T00:00:00.000000Z",
+    "updated_at": "2024-01-01T00:00:00.000000Z"
+  },
+  {
+    "id": 2,
+    "titulo": "Visitas do Site",
+    "valor": "3500.00",
+    "variacao_percentual": "-3.40",
+    "created_at": "2024-01-01T00:00:00.000000Z",
+    "updated_at": "2024-01-01T00:00:00.000000Z"
+  },
+  {
+    "id": 3,
+    "titulo": "Novos Usuários",
+    "valor": "57.00",
+    "variacao_percentual": "1.80",
+    "created_at": "2024-01-01T00:00:00.000000Z",
+    "updated_at": "2024-01-01T00:00:00.000000Z"
+  },
+  {
+    "id": 4,
+    "titulo": "Pedidos Finalizados",
+    "valor": "132.00",
+    "variacao_percentual": "0.00",
+    "created_at": "2024-01-01T00:00:00.000000Z",
+    "updated_at": "2024-01-01T00:00:00.000000Z"
+  }
+]
+```
+
+## 🔐 Autenticação
+
+### Como obter o token:
+1. **Registre um usuário** usando o endpoint `/register`
+2. **Faça login** usando o endpoint `/login`
+3. **Use o token retornado** no header `Authorization: Bearer {token}`
+
 
 ## 📊 KPIs Disponíveis
 
 O sistema inclui 4 KPIs diferentes:
 
-1. **Vendas do Dia** - R$ 1.280,50 (+5.2%)
-2. **Visitas do Site** - 3.500 (-3.4%)
-3. **Novos Usuários** - 57 (+1.8%)
-4. **Pedidos Finalizados** - 132 (0.0%)
+1. **Vendas do Dia** 
+2. **Visitas do Site** 
+3. **Novos Usuários** 
+4. **Pedidos Finalizados** 
 
 ## 🔐 Autenticação
 
@@ -132,6 +248,7 @@ O sistema inclui 4 KPIs diferentes:
 
 - **Intervalo**: 30 segundos
 - **Indicador visual**: Ponto pulsante verde
+- **Contador regressivo**: Mostra segundos até próxima atualização
 - **Tratamento de erros**: Mensagens amigáveis
 - **Reconexão automática**: Em caso de falha
 
@@ -169,6 +286,8 @@ O sistema inclui 4 KPIs diferentes:
 - **Animações e transições** suaves
 - **Design system** consistente
 - **UX otimizada** com feedback visual
+- **Contador regressivo** para atualizações
+- **Documentação completa** dos endpoints
 
 ---
 
